@@ -94,8 +94,9 @@ def main(argv):
   # TODO: turn this into a PDF report
   styles = getSampleStyleSheet()
   report = SimpleDocTemplate("/tmp/cars.pdf")
-  report_title = Paragraph("\n."join(summary), styles["h1"])
+  report_title = Paragraph("Sales summary for last month", styles["h1"])
   table_style = [('GRID', (0,0), (-1,-1), 1, colors.black)]
+  report_table_summary = Table(data=summary)
   report_table = Table(data=cars_dict_to_table(data), style=table_style)
   report.build([report_title, report_table])
   #reports.generate("/tmp/cars.pdf", "Car Sales Summary", "This is a summary.", summary)
