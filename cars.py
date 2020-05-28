@@ -3,6 +3,13 @@
 import json
 import locale
 import sys
+import reports
+import os
+import emails
+from reportlab.platypus import SimpleDocTemplate
+from reportlab.platypus import Paragraph, Spacer, Table, Image
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
 
 def load_data(filename):
   """Loads the contents of filename as a JSON file."""
@@ -42,7 +49,6 @@ def process_data(data):
     if max_sales < item["total_sales"]:
        max_sales = item["total_sales"]
        max_sales_car = item
-       print(max_sales)
 
     # TODO: also handle most popular car_year
    # print(item)
@@ -53,22 +59,18 @@ def process_data(data):
       year_dic[item["car"]["car_year"]] +=1
     most_sales = max(year_dic, key=year_dic.get)
     best_year = year_dic.get(most_sales)
-    print(best_year)
+    #print(best_year)
     #print(type(most_sales))
-    print(year_dic)
+    #print(year_dic)
     #print(max(year_dic, key=year_dic.get))
 
   summary = [
-    "The {} generated the most revenue: ${}".format(
-      format_car(max_revenue["car"]), max_revenue["revenue"]),
-    [
-    "The {} had the most sales: {}".format(
-      format_car(max_sales_car["car"]), max_sales_car["total_sales"]),
-   
-    "The most popular year was {} with {} sales.".format(
-     most_sales, best_year)
+     "The {} generated the most revenue: ${}".format(format_car(max_revenue["car"]), max_revenue["revenue"]),
+     "The {} had the most sales: {}".format(format_car(max_sales_car["car"]), max_sales_car["total_sales"]),
+     "The most popular year was {} with {} sales.".format(most_sales, best_year)
     ]
-  ]
+  #print(summary[0])
+  #print(summary[2])
   return summary
 
 
@@ -77,6 +79,8 @@ def cars_dict_to_table(car_data):
   table_data = [["ID", "Car", "Price", "Total Sales"]]
   for item in car_data:
     table_data.append([item["id"], format_car(item["car"]), item["price"], item["total_sales"]])
+  #print(table_data)
+  #print("hello world")
   return table_data
 
 
@@ -85,10 +89,26 @@ def main(argv):
   data = load_data("car_sales.json")
   summary = process_data(data)
   print(summary)
+  #print (cars_dict_to_table(data))
+  #print(data)
   # TODO: turn this into a PDF report
+  styles = getSampleStyleSheet()
+  report = SimpleDocTemplate("/tmp/cars.pdf")
+  report_title = Paragraph("\n."join(summary), styles["h1"])
+  table_style = [('GRID', (0,0), (-1,-1), 1, colors.black)]
+  report_table = Table(data=cars_dict_to_table(data), style=table_style)
+  report.build([report_title, report_table])
+  #reports.generate("/tmp/cars.pdf", "Car Sales Summary", "This is a summary.", summary)
 
   # TODO: send the PDF report as an email attachment
-
+  sender = "automation@example.com"
+  receiver = "student-02-77b88d86a689@example.com"
+  subject = "Sales summary for last month"
+  body = "\n".join(summary)
+  message = emails.generate(sender, receiver, subject, body, "/tmp/cars.pdf")
+  emails.send(message)
 
 if __name__ == "__main__":
   main(sys.argv)
+
+
