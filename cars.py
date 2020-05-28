@@ -40,7 +40,7 @@ def process_data(data):
     item_sales = item["total_sales"]
     if max_sales < item["total_sales"]:
        max_sales = item["total_sales"]
-       max_sales_care = item
+       max_sales_car = item
        print(max_sales)
 
     # TODO: also handle most popular car_year
