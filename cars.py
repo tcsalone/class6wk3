@@ -52,7 +52,7 @@ def process_data(data):
     else:
       year_dic[item["car"]["car_year"]] +=1
     most_sales = max(year_dic, key=year_dic.get)
-    best_year = max(year_dic)
+    best_year = year_dic.get(most_sales)
     print(best_year)
     #print(type(most_sales))
     print(year_dic)
