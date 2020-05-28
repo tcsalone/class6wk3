@@ -67,7 +67,7 @@ def process_data(data):
   summary = [
      "The {} generated the most revenue: ${}".format(format_car(max_revenue["car"]), max_revenue["revenue"]),
      "The {} had the most sales: {}".format(format_car(max_sales_car["car"]), max_sales_car["total_sales"]),
-     "The most popular year was {} with {} sales.".format(most_sales, best_year)
+     "The most popular year was {} with {} sales.".format(most_sales, best_year),
     ]
   #print(summary[0])
   #print(summary[2])
@@ -89,21 +89,25 @@ def main(argv):
   data = load_data("car_sales.json")
   summary = process_data(data)
   print(summary)
+  print(summary[1])
+  print(summary[0])
   #print (cars_dict_to_table(data))
   #print(data)
   # TODO: turn this into a PDF report
+
   styles = getSampleStyleSheet()
   report = SimpleDocTemplate("/tmp/cars.pdf")
   report_title = Paragraph("Sales summary for last month", styles["h1"])
   table_style = [('GRID', (0,0), (-1,-1), 1, colors.black)]
-  report_table_summary = Table(data=summary)
+  #report_table_summary = Table(data=process_data(data))
+  report_summary = Paragraph("<br/>".join(summary), styles["Normal"])
   report_table = Table(data=cars_dict_to_table(data), style=table_style)
-  report.build([report_title, report_table])
+  report.build([report_title, report_summary, report_table])
   #reports.generate("/tmp/cars.pdf", "Car Sales Summary", "This is a summary.", summary)
 
   # TODO: send the PDF report as an email attachment
   sender = "automation@example.com"
-  receiver = "student-02-77b88d86a689@example.com"
+  receiver = "student-01-4b504d841f9e@example.com"
   subject = "Sales summary for last month"
   body = "\n".join(summary)
   message = emails.generate(sender, receiver, subject, body, "/tmp/cars.pdf")
