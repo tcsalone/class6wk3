@@ -52,11 +52,11 @@ def process_data(data):
 
     # TODO: also handle most popular car_year
    # print(item)
-   # print(item["car"]["car_year"])
+    print(item["car"]["car_year"])
     if not (item["car"]["car_year"]) in year_dic:
-      year_dic[item["car"]["car_year"]] = 1
+      year_dic[item["car"]["car_year"]] = item["total_sales"]
     else:
-      year_dic[item["car"]["car_year"]] +=1
+      year_dic[item["car"]["car_year"]] += item["total_sales"]
     most_sales = max(year_dic, key=year_dic.get)
     best_year = year_dic.get(most_sales)
     #print(best_year)
